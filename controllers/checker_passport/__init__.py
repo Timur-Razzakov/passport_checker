@@ -25,18 +25,18 @@ class Individual:
         result = response.get("result")
 
         if result == "1":
-            return True
+            return {"result": True, "error": "", "code": 0}
         elif result == "0":
-            return {"error": "Сервис временно не доступен.", 'code': result}
+            return {"result": False, "error": "Сервис временно не доступен.", 'code': result}
         elif result == "4":
-            return False
+            return {"result": False, "error": "Данные не найдены в системе", 'code': result}
         elif result == "201":
-            return {"error": "Не все указанные поля заполнены.", 'code': result}
+            return {"result": False, "error": "Не все указанные поля заполнены.", 'code': result}
         elif result == "202":
-            return {"error": "Неверный формат данных.", 'code': result}
+            return {"result": False, "error": "Неверный формат данных.", 'code': result}
         else:
             # Обработка непредвиденных значений 'result'
-            return {"error": f"Неизвестное значение результата: {response}", 'code': result}
+            return {"result": False, "error": f"Неизвестное значение результата: {response}", 'code': result}
 
     @staticmethod
     async def get_details(params, url, headers=None, auth=None, is_data=False):
