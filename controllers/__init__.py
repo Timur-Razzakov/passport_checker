@@ -22,9 +22,13 @@ class _Controller:
     async def call(self, *args, **kwds):
         try:
             data = await self._call(*args, **kwds)
-            if not isinstance(data, (list, dict)):
-                data = data.dict()
-            response = ControllerResult(data=data)
+            if isinstance(data, bool):
+                response = ControllerResult(result=data)
+            elif isinstance(data, (list, dict)):
+                response = ControllerResult(data=data)
+            else:
+                data = data.dict()  # Если это объект с методом dict(), вызываем его
+                response = ControllerResult(data=data)
         except ServiceException as ex:
             ex_message = str(ex)
             self.log.warning(ex_message)
