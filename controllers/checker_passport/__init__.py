@@ -15,28 +15,23 @@ class Individual:
         self.token_lifetime = 3600
 
     @staticmethod
-    def process_response(response):
-        if isinstance(response.get('response'), str):
-            try:
-                response = json.loads(response['response'])
-            except json.JSONDecodeError:
-                return {"error": "Не удалось разобрать ответ сервиса", "code": None}
+    def process_result(result, response):
+        error_messages = {
+            "1": {"result": True, "error": "", "code": 0},
+            "0": {"result": False, "error": "Сервис временно не доступен.", 'code': 0},
+            "4": {"result": False, "error": "Данные не найдены в системе", 'code': 4},
+            "201": {"result": False, "error": "Не все указанные поля заполнены.", 'code': 201},
+            "202": {"result": False, "error": "Неверный формат данных.", 'code': 202},
+        }
+        if result in error_messages:
+            return error_messages[result]
 
+        return {"result": False, "error": f"Неизвестное значение результата: {response}", 'code': result}
+
+    def process_response(self, response):
+        """Метод для обработки полученного ответа"""
         result = response.get("result")
-
-        if result == "1":
-            return {"result": True, "error": "", "code": 0}
-        elif result == "0":
-            return {"result": False, "error": "Сервис временно не доступен.", 'code': result}
-        elif result == "4":
-            return {"result": False, "error": "Данные не найдены в системе", 'code': result}
-        elif result == "201":
-            return {"result": False, "error": "Не все указанные поля заполнены.", 'code': result}
-        elif result == "202":
-            return {"result": False, "error": "Неверный формат данных.", 'code': result}
-        else:
-            # Обработка непредвиденных значений 'result'
-            return {"result": False, "error": f"Неизвестное значение результата: {response}", 'code': result}
+        return self.process_result(result, response)
 
     @staticmethod
     async def get_details(params, url, headers=None, auth=None, is_data=False):
