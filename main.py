@@ -8,7 +8,6 @@ from starlette.responses import JSONResponse
 
 from api.routers import all_routers
 from config.settings import description
-from exceptions import ServiceException
 
 app = FastAPI(
     title="AI API",
