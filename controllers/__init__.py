@@ -1,6 +1,7 @@
 import logging
 
 from fastapi.security import HTTPBearer
+
 security = HTTPBearer()
 
 
@@ -17,9 +18,7 @@ class _Controller:
     async def call(self, *args, **kwds):
         try:
             data = await self._call(*args, **kwds)
-            if isinstance(data, bool):
-                response = {"result": data}
-            elif isinstance(data, (list, dict)):
+            if isinstance(data, (list, dict)):
                 response = data
             else:
                 response = data.dict()

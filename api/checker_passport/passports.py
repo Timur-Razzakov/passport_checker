@@ -1,10 +1,8 @@
-from typing import Union
-
 from fastapi import APIRouter
 from fastapi import Request
 
 from controllers.checker_passport.passports import CheckPassport
-from schemas.checker_passport.passports import IndividualAccount, SuccessResponse, ErrorResponse
+from schemas.checker_passport.passports import IndividualAccount, SuccessResponse
 
 router = APIRouter(
     prefix="/api/v1/passport",
@@ -14,7 +12,7 @@ router = APIRouter(
 
 @router.post(
     "/is_correct",
-    response_model=Union[SuccessResponse, ErrorResponse],
+    response_model=SuccessResponse,
 )
 async def passport_checker(request: Request, individual: IndividualAccount):
     return await CheckPassport(request).call(individual)
