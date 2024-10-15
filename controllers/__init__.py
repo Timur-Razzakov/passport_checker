@@ -1,11 +1,6 @@
 import logging
 
 from fastapi.security import HTTPBearer
-from starlette.responses import JSONResponse
-
-from exceptions import ServiceException
-from schemas import ControllerResult
-
 security = HTTPBearer()
 
 
@@ -23,29 +18,16 @@ class _Controller:
         try:
             data = await self._call(*args, **kwds)
             if isinstance(data, bool):
-                response = ControllerResult(result=data)
+                response = {"result": data}
             elif isinstance(data, (list, dict)):
-                response = ControllerResult(data=data)
+                response = data
             else:
-                data = data.dict()  # Если это объект с методом dict(), вызываем его
-                response = ControllerResult(data=data)
-        except ServiceException as ex:
-            ex_message = str(ex)
-            self.log.warning(ex_message)
-            response = ControllerResult(
-                result=False,
-                message=ex.response_message or ex_message,
-                error_code=ex.error_code,
-                error_key=ex.error_key,
-            )
-            return JSONResponse(content=response.model_dump(), status_code=500)
+                response = data.dict()
         except Exception as ex:
-            self.log.exception("%s finished with error" % self.__class__.__name__)
-            response = ControllerResult(
-                result=False,
-                message=f"Service error: {str(ex)}",
-                error_code='SERVICE_ERROR',
-            )
-            return JSONResponse(content=response.model_dump(), status_code=500)
-        else:
-            return JSONResponse(content=response.model_dump())
+            self.log.exception(f"{self.__class__.__name__} finished with error: {str(ex)}")
+            response = {
+                "result": False,
+                "message": f"Service error: {str(ex)}",
+                "error_code": 'SERVICE_ERROR',
+            }
+        return response
