@@ -38,14 +38,22 @@ class Individual:
             return {"error": f"Неизвестное значение результата: {result}", 'code': result}
 
     @staticmethod
-    async def get_details(params, url, headers=None, auth=None):
+    async def get_details(params, url, headers=None, auth=None, is_data=False):
         async with httpx.AsyncClient() as client:
-            response = await client.post(
-                url,
-                headers=headers,
-                json=params,
-                auth=auth
-            )
+            if is_data:
+                response = await client.post(
+                    url,
+                    headers=headers,
+                    data=params,  # Передача данных в формате form-data
+                    auth=auth
+                )
+            else:
+                response = await client.post(
+                    url,
+                    headers=headers,
+                    json=params,
+                    auth=auth
+                )
             if response.status_code == 200:
                 return response.json()
             else:
@@ -66,7 +74,7 @@ class Individual:
             "Content-Type": "application/x-www-form-urlencoded"
         }
         auth = BasicAuth(username=consumer_key, password=consumer_secret)
-        response = await self.get_details(params=data, url=url, auth=auth, headers=headers)
+        response = await self.get_details(params=data, url=url, auth=auth, headers=headers, is_data=True)
         self.token = response.get('access_token')
         self.token_expires_at = time.time() + self.token_lifetime
         return self.token
@@ -86,6 +94,7 @@ class Individual:
                                      sender_pinfl: str = settings.SENDER_PINFL,
                                      ):
         token = await self.get_valid_token()
+
         url = "https://rmp-apimgw.egov.uz:8243/gcp/docrest/v1"
         headers = {
             "Content-Type": "application/json",
@@ -99,7 +108,7 @@ class Individual:
             "document": passport_serial_number,
             "pinpp": pinfl,
             "is_photo": "Y",
-            "Sender": "M"
+            "Sender": "P"
         }
         self.transaction_id += 1
         individual_details = await self.get_details(params=params, url=url, headers=headers)
