@@ -35,7 +35,7 @@ class Individual:
             return {"error": "Неверный формат данных.", 'code': result}
         else:
             # Обработка непредвиденных значений 'result'
-            return {"error": f"Неизвестное значение результата: {result}", 'code': result}
+            return {"error": f"Неизвестное значение результата: {response}", 'code': result}
 
     @staticmethod
     async def get_details(params, url, headers=None, auth=None, is_data=False):
