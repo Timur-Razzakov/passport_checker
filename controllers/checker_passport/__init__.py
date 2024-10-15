@@ -101,10 +101,10 @@ class Individual:
             "Authorization": f"Bearer {token}"
         }
         params = {
-            "transaction_id": self.transaction_id,
+            "transaction_id": int(self.transaction_id),
             "is_consent": "Y",
             "sender_pinfl": sender_pinfl,
-            "langId": 1,
+            "langId": int(1),
             "document": passport_serial_number,
             "pinpp": pinfl,
             "is_photo": "Y",
