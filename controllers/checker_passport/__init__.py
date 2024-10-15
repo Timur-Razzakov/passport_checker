@@ -1,3 +1,4 @@
+import json
 import time
 
 import httpx
@@ -15,12 +16,12 @@ class Individual:
 
     @staticmethod
     def process_response(response):
-        """
-        Обрабатывает ответ от сервиса и возвращает результат в зависимости от значения поля 'result'.
+        if isinstance(response.get('response'), str):
+            try:
+                response = json.loads(response['response'])
+            except json.JSONDecodeError:
+                return {"error": "Не удалось разобрать ответ сервиса", "code": None}
 
-        :param response: словарь, содержащий ответ от сервиса
-        :return: результат обработки
-        """
         result = response.get("result")
 
         if result == "1":
