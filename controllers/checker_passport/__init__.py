@@ -67,7 +67,7 @@ class Individual:
         }
         auth = BasicAuth(username=consumer_key, password=consumer_secret)
         response = await self.get_details(params=data, url=url, auth=auth, headers=headers)
-        self.token = response["access_token"]
+        self.token = response.get('access_token')
         self.token_expires_at = time.time() + self.token_lifetime
         return self.token
 
