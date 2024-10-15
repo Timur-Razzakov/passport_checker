@@ -17,7 +17,7 @@ class Individual:
     @staticmethod
     def process_result(result, response):
         error_messages = {
-            "1": {"result": True, "error": "", "code": 0},
+            "1": {"result": True, "error": "", "code": 1},
             "0": {"result": False, "error": "Сервис временно не доступен.", 'code': 0},
             "4": {"result": False, "error": "Данные не найдены в системе", 'code': 4},
             "201": {"result": False, "error": "Не все указанные поля заполнены.", 'code': 201},
