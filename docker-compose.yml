@@ -1,0 +1,14 @@
+version: '3.1'
+
+services:
+  check_passport:
+    build: ./
+    volumes:
+      - static_volume:/home/www/staticfiles
+    env_file:
+      - .env
+    ports:
+      - "8081:8081"
+    restart: always
+volumes:
+  static_volume:
