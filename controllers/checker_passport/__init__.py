@@ -1,4 +1,3 @@
-import json
 import time
 
 import httpx
@@ -85,10 +84,10 @@ class Individual:
             username=settings.USERNAME
         )
 
-    async def get_individual_details(self, pinfl: str,
-                                     passport_serial_number: str,
-                                     sender_pinfl: str = settings.SENDER_PINFL,
-                                     ):
+    async def get_all_info_about_user(self, pinfl: str,
+                                      passport_serial_number: str,
+                                      sender_pinfl: str = settings.SENDER_PINFL,
+                                      ):
         token = await self.get_valid_token()
 
         url = "https://rmp-apimgw.egov.uz:8243/gcp/docrest/v1"
@@ -108,4 +107,12 @@ class Individual:
         }
         self.transaction_id += 1
         individual_details = await self.get_details(params=params, url=url, headers=headers)
+        return individual_details
+
+    async def get_individual_details(self, pinfl: str,
+                                     passport_serial_number: str,
+                                     ):
+        individual_details = await self.get_all_info_about_user(pinfl=pinfl,
+                                                                passport_serial_number=passport_serial_number,
+                                                                )
         return self.process_response(response=individual_details)

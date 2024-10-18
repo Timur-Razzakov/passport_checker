@@ -1,14 +1,19 @@
 import re
 from typing import Any
-from typing_extensions import Self
 
 from pydantic import BaseModel, field_validator
+from typing_extensions import Self
 
 
 class SuccessResponse(BaseModel):
     result: bool
     error: str
     code: int
+
+
+class ErrorResponse(SuccessResponse):
+    pass
+
 
 class IndividualAccount(BaseModel):
     passport_serial_number: str
@@ -25,3 +30,7 @@ class IndividualAccount(BaseModel):
         if not re.match(r"^\d{14}$", value):
             raise ValueError("PINFL must be 14 digits")
         return value
+
+
+class GetInfoAboutUser(IndividualAccount):
+    password: str
