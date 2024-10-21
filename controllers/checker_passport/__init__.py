@@ -1,9 +1,11 @@
 import time
 
 import httpx
+from fastapi import HTTPException
 from httpx import BasicAuth
 
 from config.settings import settings
+from schemas.checker_passport.passports import ErrorResponse
 
 
 class Individual:
@@ -70,6 +72,8 @@ class Individual:
         }
         auth = BasicAuth(username=consumer_key, password=consumer_secret)
         response = await self.get_details(params=data, url=url, auth=auth, headers=headers, is_data=True)
+        print(234234234234, response)
+        print(234234234234, response.text)
         self.token = response.get('access_token')
         self.token_expires_at = time.time() + self.token_lifetime
         return self.token
@@ -88,8 +92,14 @@ class Individual:
                                       passport_serial_number: str,
                                       sender_pinfl: str = settings.SENDER_PINFL,
                                       ):
-        token = await self.get_valid_token()
-
+        try:
+            token = await self.get_valid_token()
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=ErrorResponse(
+                result=False,
+                error=f'Ошибка при получении токена: {e}',
+                code=500
+            ).model_dump())
         url = "https://rmp-apimgw.egov.uz:8243/gcp/docrest/v1"
         headers = {
             "Content-Type": "application/json",

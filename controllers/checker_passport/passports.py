@@ -36,6 +36,7 @@ class GetAllInfoAboutUser(_Controller):
                 passport_serial_number=individual_account.passport_serial_number,
                 pinfl=individual_account.pinfl,
             )
+            print(111111111, account_info_dict)
             return {"result": account_info_dict, "error": "Incorrect Password ", "code": 200}
         else:
             return {"result": False, "error": "Incorrect Password ", "code": 404}
